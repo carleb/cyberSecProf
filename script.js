@@ -2,7 +2,7 @@ function updatePasswordInfo() {
     const input = document.getElementById("passwordInput");
     const password = input.value;
     document.getElementById("passwordLength").textContent = "Number of Characters: " + password.length;
-    crackPasswordTiming()
+    crackPasswordTiming(password)
     // Using Bootstrap's 'text-success' class
     document.getElementById("lowercase").classList.toggle("text-success", /[a-z]/.test(password));
     document.getElementById("uppercase").classList.toggle("text-success", /[A-Z]/.test(password));
@@ -10,7 +10,7 @@ function updatePasswordInfo() {
     document.getElementById("symbols").classList.toggle("text-success", /[^A-Za-z0-9]/.test(password));
 }
 
-function crackPasswordTiming(){
+function crackPasswordTiming(passwordInput){
     num = Number(document.getElementById("years").textContent);
     num += 1000;
     document.getElementById("years").textContent = num;
