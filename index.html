@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How secure is your password?</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>How secure is your password?</h1>
+    <label for="passwordInput">Type in a password</label>
+    <input type="password" id="passwordInput" oninput="updatePasswordInfo()">
+    <div class="checkbox-container">
+        <input type="checkbox" id="toggleView" onchange="togglePasswordVisibility()">
+        <label for="toggleView">Show Password</label>
+    </div>
+    <div id="passwordLength">Number of Characters: 0</div>
+    <div id="characterTypes">
+        <span id="lowercase" class="characterType">Lowercase</span>
+        <span id="uppercase" class="characterType">Uppercase</span>
+        <span id="numbers" class="characterType">Numbers</span>
+        <span id="symbols" class="characterType">Symbols</span>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
