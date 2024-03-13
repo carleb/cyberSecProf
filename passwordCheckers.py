@@ -1,5 +1,6 @@
 import time
 import hashlib
+import requests
 
 # Predefined dictionary file
 dictionary_file = "common_passwords.txt"
@@ -81,8 +82,75 @@ def brute_force_attack(password_length):
     # Format the estimated time
     return format_time(estimated_seconds)
 
+def check_password_security(plaintext_password):
+    # Hash the plaintext password using SHA-1
+    hashed_password = hashlib.sha1(plaintext_password.encode()).hexdigest().upper()
+    first_five_chars = hashed_password[:5]
+    rest_of_hash = hashed_password[5:]
+    # Make GET request to the Pwned Passwords API
+    api_url = f"https://api.pwnedpasswords.com/range/{first_five_chars}"
+    response = requests.get(api_url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Extract the list of hashes returned from the API response
+        hashes = response.text.splitlines()
+
+        # Search for the full SHA-1 hash in the list
+        for item in hashes:
+            if rest_of_hash in item:
+                return "Password has been breached before. It has been found in the Pwned Passwords database."
+        
+        # If the password hash is not found in the list, it's considered safe
+        return "Password is safe based on all known SHA-1 hashed breaches"
+    else:
+        # If the request fails, return an error message
+        return f"Error: Failed to fetch data from the Pwned Passwords API. Status code: {response.status_code}"
+
+def check_password_policy_compliance(password):
+    # Define password policy criteria
+    min_length = 8
+    requires_uppercase = True
+    requires_lowercase = True
+    requires_digit = True
+    requires_special = True
+    disallowed_phrases = ["passw0rd","password", "123456", "qwerty", "p@ssw0rd","p@55w0rd","P@ssw0rd123"]
+
+    if any(phrase.lower() in password.lower() for phrase in disallowed_phrases):
+        return "Weak", "Password contains common password phrases"
+    if len(password) >= min_length and any(char.isupper() for char in password) and any(char.isdigit() for char in password) and any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in password):
+        return "Strong", "Password meets the required policy"
+    if len(password) >= min_length and any(char.isupper() for char in password) and any(char.isdigit() for char in password) and not any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in password):
+        return "Moderate", "Password does not contain any special characters"
+    if len(password) >= min_length and not any(char.isupper() for char in password) and any(char.isdigit() for char in password) and not any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in password):
+        return "Moderate", "Password does not contain any special characters and uppercase characters"
+    if len(password) >= min_length and any(char.isupper() for char in password) and not any(char.isdigit() for char in password) and any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in password):
+        return "Moderate", "Password does not contain any digits"
+    if len(password) >= min_length and not any(char.isupper() for char in password) and any(char.isdigit() for char in password) and any(char in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for char in password):
+        return "Moderate", "Password does not contain any uppercase characters"
+    if len(password) <=min_length:
+        return "Weak", "Password is too short"
+
+
+    
+
+
 
 if __name__ == "__main__":
+    def check_password_until_strong(password):
+        policy_message, reason = check_password_policy_compliance(password)
+        if policy_message == "Strong":
+            return policy_message, reason
+        else:
+            print(f"Password is {policy_message}\nReason: {reason}\n")
+            new_password = input("Enter new password: ")
+            return check_password_until_strong(new_password)
+
     plaintext_password = input("Enter the plaintext password to find the hash for: ")
+    policy_message, reason = check_password_until_strong(plaintext_password)
+    print(f"Password is {policy_message}\nReason: {reason}\n")
+    print("Based on given password the following result is assumed:")
+    resultpwned = check_password_security(plaintext_password)
     result, runtime = crack_password(plaintext_password)
     print(f"Total runtime was -- {runtime} seconds. Result: {result} \n")
+    print(resultpwned)
