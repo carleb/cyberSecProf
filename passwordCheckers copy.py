@@ -1,6 +1,11 @@
 import time
 import hashlib
 import json
+import pandas as pd
+import string
+import lightgbm as lgb
+import numpy as np
+
 
 # Load substitutions dictionary from JSON file
 substitutions_dict_path = "substitutions_dict.json"  # Update this path if necessary
@@ -9,6 +14,52 @@ with open(substitutions_dict_path, "r") as file:
 
 # Predefined dictionary file
 dictionary_file = "common_passwords.txt"
+
+model_prediction_strenghts = {0: "Weak", 1: "Normal", 2: "Strong"}
+
+
+def predict_with_model(password):
+    """
+    Machine Learning Based Password Strength Classifier.
+    Accepts a single password string as input.
+    """
+
+    # Feature engineering setup
+    punctuation = list(string.punctuation)
+
+    # Wrap the input password in a DataFrame
+    X_new = pd.DataFrame([password], columns=["password"])
+
+    # Apply feature engineering
+    X_new["length"] = X_new["password"].apply(len)
+    X_new["has_num"] = X_new["password"].apply(
+        lambda x: any(char.isdigit() for char in x)
+    )
+    X_new["num_cnt"] = X_new["password"].apply(lambda x: sum(c.isdigit() for c in x))
+    X_new["has_lower"] = X_new["password"].apply(
+        lambda x: any(char.islower() for char in x)
+    )
+    X_new["lower_cnt"] = X_new["password"].apply(lambda x: sum(c.islower() for c in x))
+    X_new["has_upper"] = X_new["password"].apply(
+        lambda x: any(char.isupper() for char in x)
+    )
+    X_new["upper_cnt"] = X_new["password"].apply(lambda x: sum(c.isupper() for c in x))
+    X_new["has_special"] = X_new["password"].apply(
+        lambda x: any(char in punctuation for char in x)
+    )
+    X_new["special_cnt"] = X_new["password"].apply(
+        lambda x: sum(char in punctuation for char in x)
+    )
+
+    # Prepare features for prediction
+    features = X_new.drop(columns=["password"])
+
+    # Load the model
+    bst = lgb.Booster(model_file="lgb_model_password_classifier.txt")
+
+    # Predict
+    y_pred = bst.predict(features)
+    return np.argmax(y_pred)
 
 
 def generate_substitutions(plaintext):
@@ -158,3 +209,7 @@ if __name__ == "__main__":
     plaintext_password = input("Enter the plaintext password to find the hash for: ")
     result, runtime = crack_password(plaintext_password)
     print(f"Total runtime was -- {runtime} seconds. \nResult: {result} \n")
+
+    print("Running model through ML Password Strength Classifier")
+    mlResult = predict_with_model(plaintext_password)
+    print("Result:", model_prediction_strenghts[mlResult])
