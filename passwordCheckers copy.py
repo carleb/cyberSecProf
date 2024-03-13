@@ -15,8 +15,6 @@ with open(substitutions_dict_path, "r") as file:
 # Predefined dictionary file
 dictionary_file = "common_passwords.txt"
 
-model_prediction_strenghts = {0: "Weak", 1: "Normal", 2: "Strong"}
-
 
 def predict_with_model(password):
     """
@@ -211,5 +209,7 @@ if __name__ == "__main__":
     print(f"Total runtime was -- {runtime} seconds. \nResult: {result} \n")
 
     print("Running model through ML Password Strength Classifier")
+    model_prediction_strenghts = {0: "Weak", 1: "Normal", 2: "Strong"}
+
     mlResult = predict_with_model(plaintext_password)
     print("Result:", model_prediction_strenghts[mlResult])
