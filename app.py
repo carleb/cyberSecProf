@@ -6,6 +6,7 @@ import json
 import string
 import numpy as np
 import lightgbm as lgb
+from password_strength import PasswordStats
 
 
 app = Flask(__name__)
@@ -271,6 +272,20 @@ def give_password_score():
     return jsonify(res)
 
 print(substitution_is_found("p@ssword123"))
+
+@app.route('/password_strength', methods=['GET'])
+def get_password_strength():
+    plaintext_password = request.args.get('password')
+    
+    if not plaintext_password:
+        return jsonify({'error': 'No password provided'}), 400
+
+    stats = PasswordStats(plaintext_password)
+    strength = stats.strength(weak_bits=30)
+    weakness_factor = stats.weakness_factor
+    password_strength = int((1 - weakness_factor) * strength * 100)  # Convert to integer percentage
+
+    return jsonify({'password_strength': password_strength})
 
 
 if __name__ == "__main__":
