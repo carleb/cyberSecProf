@@ -1,7 +1,8 @@
 import time
 import hashlib
 import requests
-
+from password_strength import PasswordPolicy
+from password_strength import PasswordStats
 # Predefined dictionary file
 dictionary_file = "common_passwords.txt"
 
@@ -132,9 +133,6 @@ def check_password_policy_compliance(password):
         return "Weak", "Password is too short"
 
 
-    
-
-
 
 if __name__ == "__main__":
     def check_password_until_strong(password):
@@ -145,12 +143,23 @@ if __name__ == "__main__":
             print(f"Password is {policy_message}\nReason: {reason}\n")
             new_password = input("Enter new password: ")
             return check_password_until_strong(new_password)
+    
 
     plaintext_password = input("Enter the plaintext password to find the hash for: ")
-    policy_message, reason = check_password_until_strong(plaintext_password)
-    print(f"Password is {policy_message}\nReason: {reason}\n")
-    print("Based on given password the following result is assumed:")
-    resultpwned = check_password_security(plaintext_password)
-    result, runtime = crack_password(plaintext_password)
-    print(f"Total runtime was -- {runtime} seconds. Result: {result} \n")
-    print(resultpwned)
+
+    stats = PasswordStats(plaintext_password)
+    sequence = stats.sequences_length
+    strength = stats.strength(weak_bits = 30)
+    weakness_factor = stats.weakness_factor
+    password_strength = (1 - weakness_factor) * strength
+    print(sequence)
+    print(strength)
+    print(weakness_factor)
+    print(password_strength)
+    # policy_message, reason = check_password_until_strong(plaintext_password)
+    # print(f"Password is {policy_message}\nReason: {reason}\n")
+    # print("Based on given password the following result is assumed:")
+    # resultpwned = check_password_security(plaintext_password)
+    # result, runtime = crack_password(plaintext_password)
+    # print(f"Total runtime was -- {runtime} seconds. Result: {result} \n")
+    # print(resultpwned)
