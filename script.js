@@ -46,3 +46,22 @@ updatePasswordInfo();
 
 // Add an event listener for the input field to update info dynamically
 document.getElementById("passwordInput").addEventListener("input", updatePasswordInfo);
+
+function validateInput(input) {
+    var value = parseFloat(input.value);
+    if (value <= 0 || value > 1) {
+        input.setCustomValidity('The number must be more than 0 and less than or equal to 1.');
+    } else {
+        input.setCustomValidity('');
+    }
+}
+
+function setDefaultWeights() {
+    var inputs = document.querySelectorAll('.strength-weightage-input');
+    inputs.forEach(function(input) {
+        input.value = 1;
+        input.setCustomValidity('');
+    });
+}
+
+setDefaultWeights()
