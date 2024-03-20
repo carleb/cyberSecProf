@@ -8,7 +8,6 @@ import numpy as np
 import lightgbm as lgb
 from password_strength import PasswordStats
 
-
 app = Flask(__name__)
 
 # helper functions
@@ -201,6 +200,16 @@ def substitution_is_found(plaintext_password):
     return 0
 
 
+def char_seq_strength(plaintext_password):
+    stats = PasswordStats(plaintext_password)
+    sequence = stats.sequences_length
+    strength = stats.strength(weak_bits=30)
+    weakness_factor = stats.weakness_factor
+    password_strength = (1 - weakness_factor) * strength
+
+    return password_strength
+
+
 def ml_password_classifier_score(password):
     """
     Machine Learning Based Password Strength Classifier.
@@ -260,32 +269,45 @@ def give_password_score():
         "dict_atk_ext_src": int(dict_atk_ext_src(password)),  # Convert to Python int
         "dict_atk_int_src": int(dict_atk_int_src(password)),  # Convert to Python int
         "num_seq_is_found": int(num_seq_is_found(password)),  # Convert to Python int
-        "substitution_is_found": int(substitution_is_found(password)),  # Convert to Python int
-        "ml_password_classifer_score": int(ml_password_classifier_score(password)),  # Convert to Python int
-        "standard_checks_is_pass": int(standard_checks_is_pass(password)),  # Convert to Python int
+        "substitution_is_found": int(
+            substitution_is_found(password)
+        ),  # Convert to Python int
+        "char_seq_strength": round(
+            char_seq_strength(password),2
+        ),  # Convert to Python int
+        "ml_password_classifer_score": int(
+            ml_password_classifier_score(password)
+        ),  # Convert to Python int
+        "standard_checks_is_pass": int(
+            standard_checks_is_pass(password)
+        ),  # Convert to Python int
     }
 
     # Print the dictionary for debugging (optional)
     print(res)
-    
+
     # Return the dictionary serialized to JSON
     return jsonify(res)
 
+
 print(substitution_is_found("p@ssword123"))
 
-@app.route('/password_strength', methods=['GET'])
+
+@app.route("/password_strength", methods=["GET"])
 def get_password_strength():
-    plaintext_password = request.args.get('password')
-    
+    plaintext_password = request.args.get("password")
+
     if not plaintext_password:
-        return jsonify({'error': 'No password provided'}), 400
+        return jsonify({"error": "No password provided"}), 400
 
     stats = PasswordStats(plaintext_password)
     strength = stats.strength(weak_bits=30)
     weakness_factor = stats.weakness_factor
-    password_strength = int((1 - weakness_factor) * strength * 100)  # Convert to integer percentage
+    password_strength = int(
+        (1 - weakness_factor) * strength * 100
+    )  # Convert to integer percentage
 
-    return jsonify({'password_strength': password_strength})
+    return jsonify({"password_strength": password_strength})
 
 
 if __name__ == "__main__":
