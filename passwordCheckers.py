@@ -157,6 +157,7 @@ if __name__ == "__main__":
     print(weakness_factor)
     print(password_strength)
     # policy_message, reason = check_password_until_strong(plaintext_password)
+    
     # print(f"Password is {policy_message}\nReason: {reason}\n")
     # print("Based on given password the following result is assumed:")
     # resultpwned = check_password_security(plaintext_password)
