@@ -247,7 +247,8 @@ def ml_password_classifier_score(password):
     features = X_new.drop(columns=["password"])
 
     # Load the model
-    bst = lgb.Booster(model_file="lgb_model_password_classifier.txt")
+    # bst = lgb.Booster(model_file="lgb_model_password_classifier.txt")
+    bst = lgb.Booster(model_file="lgb_model_password_classifier.lgb")
 
     # Predict
     y_pred = bst.predict(features)
