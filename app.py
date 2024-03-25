@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, render_template_string
+from flask_cors import CORS
 import pandas as pd
 import hashlib
 import requests
@@ -9,7 +10,7 @@ import lightgbm as lgb
 from password_strength import PasswordStats
 
 app = Flask(__name__)
-
+CORS(app)
 # helper functions
 substitutions_dict_path = "substitutions_dict.json"  # Update this path if necessary
 with open(substitutions_dict_path, "r") as file:
