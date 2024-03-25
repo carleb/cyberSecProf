@@ -255,6 +255,23 @@ def ml_password_classifier_score(password):
     return np.argmax(y_pred)
 
 
+def estimate_brute_force_time(password):
+    """
+    Estimates the time required for a brute force attack to crack the given password, returning the time in hours.
+    """
+    password_length = len(password)
+    attempts_per_second = 1e11  # Assumption based on computational capability
+    possible_characters = (
+        26 + 26 + 10 + 32
+    )  # Uppercase, lowercase, digits, and 32 symbols
+    total_combinations = possible_characters**password_length
+    estimated_seconds = total_combinations / attempts_per_second
+
+    # Convert estimated time from seconds to hours
+    estimated_hours = estimated_seconds / 3600
+    return estimated_hours
+
+
 @app.route("/")
 def home():
     return render_template_string(open("index.html").read())
@@ -274,13 +291,16 @@ def give_password_score():
             substitution_is_found(password)
         ),  # Convert to Python int
         "char_seq_strength": round(
-            char_seq_strength(password),2
+            char_seq_strength(password), 2
         ),  # Convert to Python int
         "ml_password_classifer_score": int(
             ml_password_classifier_score(password)
         ),  # Convert to Python int
         "standard_checks_is_pass": int(
             standard_checks_is_pass(password)
+        ),  # Convert to Python int
+        "estimate_brute_force_time_hours": round(
+            estimate_brute_force_time(password), 3
         ),  # Convert to Python int
     }
 

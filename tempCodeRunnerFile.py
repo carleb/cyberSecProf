@@ -1,1 +1,1 @@
-password_strength
+from password_strength import PasswordStats
