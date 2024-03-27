@@ -11,7 +11,7 @@ function updatePasswordInfo() {
 
 function checkPasswordStrength() {
     var password = document.getElementById("passwordInput").value
-    if(password.length == 0){
+    if (password.length == 0) {
         document.getElementById("password-strength-text").innerText = 'Please enter a password'
         return
     }
@@ -37,64 +37,69 @@ function checkPasswordStrength() {
             var charSub = "Pass"
             var standardNum = "Pass"
             var finalScore = 0
-            if(data.dict_atk_int_src != 1){
+            if (data.dict_atk_int_src != 1) {
                 dicAttInt = "Fail"
             }
-            if(data.dict_atk_ext_src != 1){
+            if (data.dict_atk_ext_src != 1) {
                 dicAttExt = "Fail"
             }
-            if(data.num_seq_is_found != 1){
+            if (data.num_seq_is_found != 1) {
                 numSeq = "Fail"
             }
-            if(data.substitution_is_found != 1){
+            if (data.substitution_is_found != 1) {
                 charSub = "Fail"
             }
-            if(data.standard_checks_is_pass != 1){
+            if (data.standard_checks_is_pass != 1) {
                 standardNum = "Fail"
             }
-            document.getElementById("dict_atk_int_src").innerText=dicAttInt
-            document.getElementById("dict_atk_ext_src").innerText=dicAttExt
-            document.getElementById("num_seq_is_found").innerText=numSeq
-            document.getElementById("char_seq_strength").innerText=data.char_seq_strength
-            document.getElementById("substitution_is_found").innerText=charSub
-            document.getElementById("ml_password_classifer_score").innerText=data.ml_password_classifer_score
-            document.getElementById("standard_checks_is_pass").innerText=standardNum
-            document.getElementById("brute_force_timing").innerText=0
-            
-            finalScore = (document.getElementById("dicAttIntWeight").value*data.dict_atk_int_src) +
-            (document.getElementById("dicAttExtWeight").value*data.dict_atk_ext_src) +
-            (document.getElementById("numSeqWeight").value*data.num_seq_is_found) +
-            (document.getElementById("charSeqWeight").value*data.char_seq_strength) +
-            (document.getElementById("charSubWeight").value*data.substitution_is_found) +
-            (document.getElementById("mlWeight").value*data.ml_password_classifer_score) +
-            (document.getElementById("standardNumWeight").value*data.standard_checks_is_pass) +
-            (document.getElementById("bruteForceWeight").value*0)
-            document.getElementById("finalScore").innerText=finalScore
+            document.getElementById("dict_atk_int_src").innerText = dicAttInt
+            document.getElementById("dict_atk_ext_src").innerText = dicAttExt
+            document.getElementById("num_seq_is_found").innerText = numSeq
+            document.getElementById("char_seq_strength").innerText = data.char_seq_strength
+            document.getElementById("substitution_is_found").innerText = charSub
+            document.getElementById("ml_password_classifer_score").innerText = data.ml_password_classifer_score
+            document.getElementById("standard_checks_is_pass").innerText = standardNum
+            document.getElementById("brute_force_timing").innerText = convertHoursToTimeString(data.estimate_brute_force_time_hours)
 
-            if (finalScore > 0 && finalScore <= 0.2) {
+            finalScore = (document.getElementById("numSeqWeight").value * data.num_seq_is_found) +
+                (document.getElementById("charSeqWeight").value * data.char_seq_strength) +
+                (document.getElementById("charSubWeight").value * data.substitution_is_found) +
+                (document.getElementById("mlWeight").value * data.ml_password_classifer_score) +
+                (document.getElementById("standardNumWeight").value * data.standard_checks_is_pass)
+            document.getElementById("finalScore").innerText = finalScore
+            if(data.dict_atk_int_src == 0 || data.dict_atk_ext_src == 0){
                 document.getElementById("password-strength-bg").className = "bg-danger p-1 text-center rounded"
                 document.getElementById("password-strength-text").textContent = "Weak"
                 document.getElementById("strength").className = "text-danger"
                 document.getElementById("strength").innerText = "Weak"
             }
-            else if (finalScore > 0.2 && finalScore <= 0.4) {
-                document.getElementById("password-strength-bg").className = "bg-warning p-1 text-center rounded"
-                document.getElementById("password-strength-text").textContent = "Medium"
-                document.getElementById("strength").className = "text-warning"
-                document.getElementById("strength").innerText = "Medium"
+            else{
+                if (finalScore > 0 && finalScore <= 0.1) {
+                    document.getElementById("password-strength-bg").className = "bg-danger p-1 text-center rounded"
+                    document.getElementById("password-strength-text").textContent = "Weak"
+                    document.getElementById("strength").className = "text-danger"
+                    document.getElementById("strength").innerText = "Weak"
+                }
+                else if (finalScore > 0.1 && finalScore <= 0.4) {
+                    document.getElementById("password-strength-bg").className = "bg-warning p-1 text-center rounded"
+                    document.getElementById("password-strength-text").textContent = "Medium"
+                    document.getElementById("strength").className = "text-warning"
+                    document.getElementById("strength").innerText = "Medium"
+                }
+                else if (finalScore > 0.25) {
+                    document.getElementById("password-strength-bg").className = "bg-success p-1 text-center rounded"
+                    document.getElementById("password-strength-text").textContent = "Strong"
+                    document.getElementById("strength").className = "text-success"
+                    document.getElementById("strength").innerText = "Strong"
+                }
             }
-            else if (finalScore > 0.4) {
-                document.getElementById("password-strength-bg").className = "bg-success p-1 text-center rounded"
-                document.getElementById("password-strength-text").textContent = "Strong"
-                document.getElementById("strength").className = "text-success"
-                document.getElementById("strength").innerText = "Strong"
-            }
+            
         })
         .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
         });
 
-        
+
 
 }
 
@@ -125,7 +130,7 @@ function validateInput(input) {
 }
 
 function setDefaultWeights() {
-    var arr = [0, 0.1348961535622344, 0.01796824218137424, 0.761481294060113, 0.0768704525711875, 0.008783857625090846, 0, 0]
+    var arr = [0.01797, 0.76147, 0.21177, 0.00878, 0]
     var inputs = document.querySelectorAll('.strength-weightage-input');
     var i = 0
     inputs.forEach(function (input) {
@@ -134,5 +139,26 @@ function setDefaultWeights() {
         i++
     });
 }
+
+function convertHoursToTimeString(hours) {
+    const hoursPerYear = 365 * 24;
+    const hoursPerMonth = 30 * 24; // Approximation, as the exact value varies
+    const hoursPerDay = 24;
+
+    let remainingHours = hours;
+
+    const years = Math.floor(remainingHours / hoursPerYear);
+    remainingHours -= years * hoursPerYear;
+
+    const months = Math.floor(remainingHours / hoursPerMonth);
+    remainingHours -= months * hoursPerMonth;
+
+    const days = Math.floor(remainingHours / hoursPerDay);
+    remainingHours -= days * hoursPerDay;
+    roundedHours = Math.round(remainingHours);
+
+    return `${years} Years, ${months} Months, ${days} Days, ${roundedHours} Hours`;
+}
+
 
 setDefaultWeights()

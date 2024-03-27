@@ -57,7 +57,6 @@
                     <th scope="col">Character Substitutions Check</th>
                     <th scope="col">ML Password Strength Classification Check</th>
                     <th scope="col">Standard Number Length Check</th>
-                    <th scope="col">Brute Force Time (Years)</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,18 +69,16 @@
                     <td id="substitution_is_found">Pass</td> <!-- Fill as required -->
                     <td id="ml_password_classifer_score">3</td> <!-- Fill as required -->
                     <td id="standard_checks_is_pass">Pass</td> <!-- Fill as required -->
-                    <td id="brute_force_timing">0</td> <!-- Fill as required -->
                 </tr>
                 <tr>
                     <th scope="row">Strength Weightage</th>
-                    <td><input id="dicAttIntWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
-                    <td><input id="dicAttExtWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
+                    <td>-</td>
+                    <td>-</td>
                     <td><input id="numSeqWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
                     <td><input id="charSeqWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
                     <td><input id="charSubWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
                     <td><input id="mlWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
                     <td><input id="standardNumWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
-                    <td><input id="bruteForceWeight" type="number" step="0.01" min="0.01" max="1" class="form-control strength-weightage-input" oninput="validateInput(this)" required></td>
                 </tr>
             </tbody>
         </table>
@@ -92,6 +89,14 @@
         </h2>
         <h5 class="text-center">
             <span id="finalScore">0</span>
+        </h5>
+    </div>
+    <div id="characterTypes" class="text-secondary mb-3">
+        <h2 class="text-center">
+            Brute Force Timing
+        </h2>
+        <h5 class="text-center">
+            <span id="brute_force_timing">0</span>
         </h5>
     </div>
     <div id="characterTypes" class="text-secondary">
