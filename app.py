@@ -156,26 +156,22 @@ def num_seq_is_found(password):
         if char.isdigit():
             numeric_sequence += char
             if is_sequential(numeric_sequence) and len(numeric_sequence) >= 3:
-                return 1  # Found a sequential numeric sequence
+                return 0  # Found a sequential numeric sequence
         else:
             if is_sequential(numeric_sequence) and len(numeric_sequence) >= 3:
-                return 1  # Found a sequential numeric sequence
+                return 0  # Found a sequential numeric sequence
             numeric_sequence = ""  # Reset sequence because current char is not a digit
     # Check the last sequence if the password ends with a numeric sequence
     if is_sequential(numeric_sequence) and len(numeric_sequence) >= 3:
-        return 1
-    return 0  # No sequential numeric sequence found
+        return 0
+    return 1  #  sequential numeric sequence found
 
 
-def substitution_is_found(plaintext_password):
+def substitution_is_found(plaintext_password): #0 if found
     # First, remove numeric sequences from the password
-    sequence_removed_password, sequence_removed = remove_numeric_sequences(
-        plaintext_password
-    )
+    sequence_removed_password, sequence_removed = remove_numeric_sequences(plaintext_password)
     # Then, try to generate substitutions
-    final_password, substitution_made = generate_substitutions(
-        sequence_removed_password
-    )
+    final_password, substitution_made = generate_substitutions(sequence_removed_password)
 
     # Calculate the MD5 hash of the final processed password
     solution = hashlib.md5(final_password.encode()).hexdigest()
@@ -187,18 +183,18 @@ def substitution_is_found(plaintext_password):
                 line = line.strip()
                 if hashlib.md5(line.encode()).hexdigest() == solution:
                     # Password found in dictionary after modifications
-                    return 1
+                    return 0
     except FileNotFoundError:
         print(f"Error: The file '{dictionary_file}' was not found.")
         # If the dictionary file is missing, treat it as if the password couldn't be cracked
-        return 0
+        return 1
 
     # If the password was modified but not found in the dictionary, return 0
     if substitution_made and not sequence_removed:
-        return 0
+        return 1
 
     # If no modifications were made or the password wasn't found in the dictionary, also return 0
-    return 0
+    return 1
 
 
 def char_seq_strength(plaintext_password):
