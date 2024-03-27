@@ -167,34 +167,20 @@ def num_seq_is_found(password):
     return 1  #  sequential numeric sequence found
 
 
-def substitution_is_found(plaintext_password): #0 if found
+def substitution_is_found(
+    plaintext_password,
+):  # Returns 0 if a substitution has been made
     # First, remove numeric sequences from the password
-    sequence_removed_password, sequence_removed = remove_numeric_sequences(plaintext_password)
+    sequence_removed_password, sequence_removed = remove_numeric_sequences(
+        plaintext_password
+    )
     # Then, try to generate substitutions
-    final_password, substitution_made = generate_substitutions(sequence_removed_password)
+    final_password, substitution_made = generate_substitutions(
+        sequence_removed_password
+    )
 
-    # Calculate the MD5 hash of the final processed password
-    solution = hashlib.md5(final_password.encode()).hexdigest()
-    # print(final_password)
-    # Attempt to find the password in the dictionary
-    try:
-        with open(dictionary_file, "r") as filename:
-            for line in filename:
-                line = line.strip()
-                if hashlib.md5(line.encode()).hexdigest() == solution:
-                    # Password found in dictionary after modifications
-                    return 0
-    except FileNotFoundError:
-        print(f"Error: The file '{dictionary_file}' was not found.")
-        # If the dictionary file is missing, treat it as if the password couldn't be cracked
-        return 1
-
-    # If the password was modified but not found in the dictionary, return 0
-    if substitution_made and not sequence_removed:
-        return 1
-
-    # If no modifications were made or the password wasn't found in the dictionary, also return 0
-    return 1
+    # Return 0 if a substitution has been made, 1 otherwise
+    return 0 if substitution_made else 1
 
 
 def char_seq_strength(plaintext_password):
@@ -308,7 +294,7 @@ def give_password_score():
     return jsonify(res)
 
 
-print(substitution_is_found("p@ssword123"))
+print(substitution_is_found("password123"))
 
 
 @app.route("/password_strength", methods=["GET"])

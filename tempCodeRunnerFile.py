@@ -1,1 +1,2 @@
-from password_strength import PasswordStats
+
+    app.run(debug=True)
